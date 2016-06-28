@@ -17,24 +17,51 @@ public class Post {
 
     Document mDoc;
 
-    String mHtml;
-    String article;
+    String mText;
+    String mArticle;
+    String mPush;
 
     public Post(String url, String title) {
         mUrl = Common.host + url;
         mTitle = title;
-        preparePost();
+        prepare();
+    }
+
+    public String getUrl() {
+        return mUrl;
+    }
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public boolean titleContains(String keyword) {
+        return mTitle.contains(keyword);
+    }
+    public boolean articleContains(String keyword) {
+        return mArticle.contains(keyword);
+    }
+    public boolean pushContains(String keyword) {
+        return mPush.contains(keyword);
+    }
+    public boolean textContains(String keyword) {
+        return mText.contains(keyword);
     }
 
     public boolean isPrepared() {
-        return mHtml != null && mDoc != null;
+        return mText != null && mDoc != null;
     }
 
-    private void preparePost() {
+    private void prepare() {
         try {
             mDoc = Jsoup.connect(mUrl).get();
             Element content = mDoc.getElementById("main-content");
-            mHtml = content.html();
+            mText = content.text();
+            mPush = content.getElementsByClass("push").text();
+            content.getElementsByClass("article-metaline").remove();
+            content.getElementsByClass("article-metaline-right").remove();
+            content.getElementsByClass("push").remove();
+            mArticle = content.text();
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -42,6 +69,6 @@ public class Post {
     }
 
     public static void main(String[] args) {
-        new Post("/bbs/BuyTogether/M.1467098058.A.382.html", "[無主] Sigma刷具七折免運團-郵寄");
+        new Post("/bbs/BuyTogether/M.1464712367.A.FF5.html", "[無主] Sigma刷具七折免運團-郵寄");
     }
 }
