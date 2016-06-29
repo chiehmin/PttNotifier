@@ -35,7 +35,7 @@ public class Post {
     }
 
     public boolean titleContains(String keyword) {
-        return mTitle.contains(keyword);
+        return mTitle.toLowerCase().contains(keyword.toLowerCase());
     }
     public boolean articleContains(String keyword) {
         return mArticle.contains(keyword);

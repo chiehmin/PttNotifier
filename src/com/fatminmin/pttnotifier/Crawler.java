@@ -9,7 +9,9 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by fatminmin on 6/28/16.
@@ -17,12 +19,14 @@ import java.util.List;
 public class Crawler {
 
     private String mBoard;
-    private String mKeyword;
+    private List<String> keywordsList = new ArrayList<>();
 
     private long mTimeOut = 10 * 1000;
     private boolean cont = false;
 
     private UIController mUIContronller;
+
+    private Set<String> shown = new HashSet<>();
 
     public Crawler(UIController controller) {
         mBoard = "BuyTogether";
@@ -31,11 +35,11 @@ public class Crawler {
 
     public Crawler(String board, String keyword) {
         mBoard = board;
-        mKeyword = keyword;
+        keywordsList.add(keyword);
     }
 
-    public void setKeyword(String keyword) {
-        mKeyword = keyword;
+    public void addKeyword(String keyword) {
+        keywordsList.add(keyword);
     }
     public void setBoard(String board) {
         mBoard = board;
@@ -44,6 +48,7 @@ public class Crawler {
     public void loop() {
         try {
             while(cont) {
+                mUIContronller.log("Starting parsing board...");
                 checkBoardArticles();
                 Thread.sleep(mTimeOut);
             }
@@ -52,7 +57,7 @@ public class Crawler {
         }
     }
     public boolean start() {
-        if(mBoard == null || mKeyword == null) return false;
+        if(mBoard == null) return false;
         try {
             Common.enableSSLSocket();
         } catch (Exception e) {
@@ -61,9 +66,11 @@ public class Crawler {
         }
 
         cont = true;
-        new Thread(() -> {
+        Thread worker = new Thread(() -> {
            loop();
-        }).start();
+        });
+        worker.setDaemon(true);
+        worker.start();
         return true;
     }
     public void stop() {
@@ -73,6 +80,7 @@ public class Crawler {
 
 
     private void notifyPostAppeared(Post post) {
+        shown.add(post.getUrl());
         System.out.println(post.getTitle() + " " + post.getUrl());
         Platform.runLater(() -> {
             mUIContronller.notifyPostAppeared(post.getTitle(), post.getUrl());
@@ -81,9 +89,18 @@ public class Crawler {
 
     private void checkBoardArticles() {
         List<Post> posts = getBoardArticles(Common.getBoardUrl(mBoard));
+
+        mUIContronller.log("Find " + posts.size() + " posts.");
+
         for(Post post : posts) {
-            if(post.titleContains(mKeyword)) {
-                notifyPostAppeared(post);
+            mUIContronller.log(post.getTitle());
+            if(shown.contains(post.getUrl())) continue;
+
+            for(String keyword : keywordsList) {
+                if(post.titleContains(keyword)) {
+                    notifyPostAppeared(post);
+                    break;
+                }
             }
         }
     }

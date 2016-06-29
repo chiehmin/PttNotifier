@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     public static Crawler crawler = null;
+    public static Application app = null;
 
     FXMLLoader fxmlLoader;
     UIController uiController;
@@ -22,11 +23,12 @@ public class Main extends Application {
         fxmlLoader = new FXMLLoader(getClass().getResource("main.fxml"));
         Parent root = fxmlLoader.load();
         primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 400, 250));
+        primaryStage.setScene(new Scene(root, 700, 300));
         primaryStage.show();
 
         uiController = fxmlLoader.getController();
         crawler = new Crawler(uiController);
+        app = this;
     }
 
 

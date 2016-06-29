@@ -8,16 +8,26 @@
 <?import javafx.scene.text.*?>
 
 <GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fatminmin.pttnotifier.UIController">
-    <padding><Insets bottom="10" left="25" right="25" top="25" /></padding>
+    <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
    <children>
-      <Text text="PttNotifier" GridPane.columnSpan="2147483647" GridPane.rowIndex="0">
+      <Text text="PttNotifier" GridPane.columnSpan="2147483647">
          <font>
             <Font size="24.0" />
          </font></Text>
-      <Label text="Keyword" GridPane.rowIndex="1" />
-      <TextField fx:id="tfKeyword" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-      <Button fx:id="btnControl" mnemonicParsing="false" onAction="#handleControl" text="Start" GridPane.rowIndex="2" />
-      <TextArea fx:id="taLog" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" GridPane.rowSpan="2147483647" />
+      <TextField fx:id="tfKeyword" GridPane.rowIndex="1" />
+      <Button fx:id="btnControl" mnemonicParsing="false" onAction="#handleControl" text="Start" GridPane.rowIndex="3" />
+      <TextArea fx:id="taLog" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnSpan="5" GridPane.rowIndex="4" GridPane.rowSpan="2147483647" />
+      <Label alignment="CENTER" text="Result" GridPane.columnIndex="5">
+         <font>
+            <Font size="20.0" />
+         </font></Label>
+      <ScrollPane prefHeight="200.0" prefWidth="300.0" GridPane.columnIndex="5" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
+         <content>
+            <VBox fx:id="vbResult" prefHeight="200.0" prefWidth="300.0" />
+         </content>
+      </ScrollPane>
+      <Text fx:id="txKeywords" text="Keywords: " GridPane.rowIndex="2" GridPane.columnSpan="2" />
+      <Button fx:id="btnAddKeyword" mnemonicParsing="false" onAction="#handleAddKeyword" text="Add keyword" GridPane.columnIndex="2" GridPane.rowIndex="1" />
    </children>
    <columnConstraints>
       <ColumnConstraints />
@@ -25,8 +35,13 @@
       <ColumnConstraints />
       <ColumnConstraints />
       <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
    </columnConstraints>
    <rowConstraints>
+      <RowConstraints />
       <RowConstraints />
       <RowConstraints />
       <RowConstraints />
