@@ -12,12 +12,21 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+    public static Crawler crawler = null;
+
+    FXMLLoader fxmlLoader;
+    UIController uiController;
+
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
+    public void start(Stage primaryStage) throws Exception {
+        fxmlLoader = new FXMLLoader(getClass().getResource("main.fxml"));
+        Parent root = fxmlLoader.load();
         primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setScene(new Scene(root, 400, 250));
         primaryStage.show();
+
+        uiController = fxmlLoader.getController();
+        crawler = new Crawler(uiController);
     }
 
 

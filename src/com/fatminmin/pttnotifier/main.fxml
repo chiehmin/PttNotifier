@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<GridPane fx:controller="com.fatminmin.pttnotifier.UIController"
-          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
-    <padding><Insets top="25" right="25" bottom="10" left="25"/></padding>
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fatminmin.pttnotifier.UIController">
+    <padding><Insets bottom="10" left="25" right="25" top="25" /></padding>
+   <children>
+      <Text text="PttNotifier" GridPane.columnSpan="2147483647" GridPane.rowIndex="0">
+         <font>
+            <Font size="24.0" />
+         </font></Text>
+      <Label text="Keyword" GridPane.rowIndex="1" />
+      <TextField fx:id="tfKeyword" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+      <Button fx:id="btnControl" mnemonicParsing="false" onAction="#handleControl" text="Start" GridPane.rowIndex="2" />
+      <TextArea fx:id="taLog" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" GridPane.rowSpan="2147483647" />
+   </children>
+   <columnConstraints>
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
 
 </GridPane>

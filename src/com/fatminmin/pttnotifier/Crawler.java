@@ -1,6 +1,7 @@
 package com.fatminmin.pttnotifier;
 
 import com.fatminmin.pttnotifier.model.Post;
+import javafx.application.Platform;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,14 +17,28 @@ import java.util.List;
 public class Crawler {
 
     private String mBoard;
-    private String mKeywords;
+    private String mKeyword;
 
     private long mTimeOut = 10 * 1000;
-    private boolean cont = true;
+    private boolean cont = false;
+
+    private UIController mUIContronller;
+
+    public Crawler(UIController controller) {
+        mBoard = "BuyTogether";
+        mUIContronller = controller;
+    }
 
     public Crawler(String board, String keyword) {
         mBoard = board;
-        mKeywords = keyword;
+        mKeyword = keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        mKeyword = keyword;
+    }
+    public void setBoard(String board) {
+        mBoard = board;
     }
 
     public void loop() {
@@ -33,25 +48,42 @@ public class Crawler {
                 Thread.sleep(mTimeOut);
             }
         } catch (Exception e) {
-            // do nothing
+            e.printStackTrace();
         }
     }
-    public void start() {
+    public boolean start() {
+        if(mBoard == null || mKeyword == null) return false;
+        try {
+            Common.enableSSLSocket();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
         cont = true;
         new Thread(() -> {
            loop();
         }).start();
+        return true;
     }
     public void stop() {
         cont = false;
     }
+    public boolean isRunning() { return cont; }
 
+
+    private void notifyPostAppeared(Post post) {
+        System.out.println(post.getTitle() + " " + post.getUrl());
+        Platform.runLater(() -> {
+            mUIContronller.notifyPostAppeared(post.getTitle(), post.getUrl());
+        });
+    }
 
     private void checkBoardArticles() {
         List<Post> posts = getBoardArticles(Common.getBoardUrl(mBoard));
         for(Post post : posts) {
-            if(post.titleContains(mKeywords)) {
-                System.out.println(post.getTitle() + " " + post.getUrl());
+            if(post.titleContains(mKeyword)) {
+                notifyPostAppeared(post);
             }
         }
     }
@@ -61,10 +93,12 @@ public class Crawler {
             Document doc = Jsoup.connect(url).get();
             Elements posts = doc.select(".title");
             for(Element post : posts) {
-                Element a = post.child(0);
-                String link = a.attr("href");
-                String title = a.html();
-                res.add(new Post(link, title));
+                try {
+                    Element a = post.child(0);
+                    String link = a.attr("href");
+                    String title = a.html();
+                    res.add(new Post(link, title));
+                } catch (Exception e) {}
             }
         } catch (IOException e) {
             e.printStackTrace();
