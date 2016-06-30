@@ -21,7 +21,11 @@ public class Main extends Application {
 
 
     static public void moveToFront() {
-        if(mStage != null) mStage.toFront();
+        if(mStage != null) {
+            mStage.setAlwaysOnTop(true);
+            mStage.toFront();
+            mStage.setAlwaysOnTop(false);
+        }
     }
 
     @Override

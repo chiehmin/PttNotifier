@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 /**
  * Created by fatminmin on 6/28/16.
@@ -49,10 +50,11 @@ public class UIController {
     }
 
     private void alertUser(String title) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Find new post!!");
-        alert.setContentText(title);
-        alert.showAndWait();
+        Main.moveToFront();
+//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//        alert.setTitle("Find new post!!");
+//        alert.setContentText(title);
+//        alert.showAndWait();
     }
 
     public void notifyPostAppeared(String title, String url) {
