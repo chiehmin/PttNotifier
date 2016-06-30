@@ -24,7 +24,7 @@ public class Post {
     public Post(String url, String title) {
         mUrl = Common.host + url;
         mTitle = title;
-        prepare();
+//        prepare();
     }
 
     public String getUrl() {

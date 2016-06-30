@@ -34,6 +34,8 @@ public class UIController {
     @FXML protected void handleAddKeyword(ActionEvent event) {
         String text = txKeywords.getText();
         String keyword = tfKeyword.getText();
+        if(keyword.trim().length() == 0) return;
+
         Main.crawler.addKeyword(keyword);
 
         txKeywords.setText(text + keyword + " ");
@@ -41,7 +43,12 @@ public class UIController {
     }
 
     public void log(String msg) {
+        while(taLog.getText().length() > 1000) {
+            String curText = taLog.getText();
+            taLog.setText(curText.substring(curText.indexOf("\n") + 1));
+        }
         taLog.appendText(msg + "\n");
+        taLog.setScrollTop(Double.MAX_VALUE);
     }
 
     public void notifyPostAppeared(String title, String url) {

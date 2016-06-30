@@ -2,6 +2,7 @@ package com.fatminmin.pttnotifier;
 
 import com.fatminmin.pttnotifier.model.Post;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -28,6 +29,14 @@ public class Crawler {
 
     private Set<String> shown = new HashSet<>();
 
+    private Task loopTask = new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+            loop();
+            return null;
+        }
+    };
+
     public Crawler(UIController controller) {
         mBoard = "BuyTogether";
         mUIContronller = controller;
@@ -48,7 +57,7 @@ public class Crawler {
     public void loop() {
         try {
             while(cont) {
-                mUIContronller.log("Starting parsing board...");
+                log("Starting parsing board...");
                 checkBoardArticles();
                 Thread.sleep(mTimeOut);
             }
@@ -66,9 +75,7 @@ public class Crawler {
         }
 
         cont = true;
-        Thread worker = new Thread(() -> {
-           loop();
-        });
+        Thread worker = new Thread(loopTask);
         worker.setDaemon(true);
         worker.start();
         return true;
@@ -78,6 +85,12 @@ public class Crawler {
     }
     public boolean isRunning() { return cont; }
 
+
+    private void log(String msg) {
+        Platform.runLater(() -> {
+            mUIContronller.log(msg);
+        });
+    }
 
     private void notifyPostAppeared(Post post) {
         shown.add(post.getUrl());
@@ -90,10 +103,11 @@ public class Crawler {
     private void checkBoardArticles() {
         List<Post> posts = getBoardArticles(Common.getBoardUrl(mBoard));
 
-        mUIContronller.log("Find " + posts.size() + " posts.");
+        log("Find " + posts.size() + " posts.");
 
         for(Post post : posts) {
-            mUIContronller.log(post.getTitle());
+            log(post.getTitle());
+
             if(shown.contains(post.getUrl())) continue;
 
             for(String keyword : keywordsList) {
