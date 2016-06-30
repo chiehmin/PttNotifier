@@ -2,10 +2,7 @@ package com.fatminmin.pttnotifier;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -51,6 +48,13 @@ public class UIController {
         taLog.setScrollTop(Double.MAX_VALUE);
     }
 
+    private void alertUser(String title) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Find new post!!");
+        alert.setContentText(title);
+        alert.showAndWait();
+    }
+
     public void notifyPostAppeared(String title, String url) {
 
         Hyperlink link = new Hyperlink(title);
@@ -58,5 +62,6 @@ public class UIController {
             Main.app.getHostServices().showDocument(url);
         });
         vbResult.getChildren().add(link);
+        alertUser(title);
     }
 }

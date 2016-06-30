@@ -16,6 +16,9 @@ public class Common {
     static public String getBoardUrl(String board) {
         return prefix + board + "/index.html";
     }
+    static public String getCompleteUrl(String path) {
+        return host + path;
+    }
 
     public static void enableSSLSocket() throws java.security.GeneralSecurityException {
         HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {

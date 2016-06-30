@@ -9,10 +9,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by fatminmin on 6/28/16.
@@ -24,6 +22,7 @@ public class Crawler {
 
     private long mTimeOut = 10 * 1000;
     private boolean cont = false;
+    private boolean firstRun = false;
 
     private UIController mUIContronller;
 
@@ -57,8 +56,13 @@ public class Crawler {
     public void loop() {
         try {
             while(cont) {
+                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+                log("[Parsing start] " + sdf.format(new Date()));
                 log("Starting parsing board...");
+
                 checkBoardArticles();
+
+                log("[Parsing end] " + sdf.format(new Date()));
                 Thread.sleep(mTimeOut);
             }
         } catch (Exception e) {
@@ -75,6 +79,7 @@ public class Crawler {
         }
 
         cont = true;
+        firstRun = true;
         Thread worker = new Thread(loopTask);
         worker.setDaemon(true);
         worker.start();
@@ -101,7 +106,28 @@ public class Crawler {
     }
 
     private void checkBoardArticles() {
-        List<Post> posts = getBoardArticles(Common.getBoardUrl(mBoard));
+
+        List<Post> posts = new ArrayList<>();
+        try {
+            String boardIndexUrl = Common.getBoardUrl(mBoard);
+            Document doc = Jsoup.connect(boardIndexUrl).get();
+            posts.addAll(getBoardArticles(doc));
+
+            if(firstRun) {
+                firstRun = false;
+                Elements btns = doc.select(".btn.wide");
+                for(Element btn : btns) {
+                    if(btn.text().contains("上頁")) {
+                        String lastPageUrl = Common.getCompleteUrl(btn.attr("href"));
+                        doc = Jsoup.connect(lastPageUrl).get();
+                        posts.addAll(getBoardArticles(doc));
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         log("Find " + posts.size() + " posts.");
 
@@ -118,21 +144,18 @@ public class Crawler {
             }
         }
     }
-    private List<Post> getBoardArticles(String url) {
+    private List<Post> getBoardArticles(Document doc) {
         List<Post> res = new ArrayList<>();
-        try {
-            Document doc = Jsoup.connect(url).get();
-            Elements posts = doc.select(".title");
-            for(Element post : posts) {
-                try {
-                    Element a = post.child(0);
-                    String link = a.attr("href");
-                    String title = a.html();
-                    res.add(new Post(link, title));
-                } catch (Exception e) {}
+        Elements posts = doc.select(".title");
+        for(Element post : posts) {
+            try {
+                Element a = post.child(0);
+                String link = a.attr("href");
+                String title = a.html();
+                res.add(new Post(link, title));
+            } catch (Exception e) {
+                // do nothing
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return res;
     }

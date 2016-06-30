@@ -14,9 +14,15 @@ public class Main extends Application {
 
     public static Crawler crawler = null;
     public static Application app = null;
+    public static Stage mStage;
 
     FXMLLoader fxmlLoader;
     UIController uiController;
+
+
+    static public void moveToFront() {
+        if(mStage != null) mStage.toFront();
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -29,6 +35,7 @@ public class Main extends Application {
         uiController = fxmlLoader.getController();
         crawler = new Crawler(uiController);
         app = this;
+        mStage = primaryStage;
     }
 
 
