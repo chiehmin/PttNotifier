@@ -1,10 +1,14 @@
 package com.fatminmin.pttnotifier;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import tray.animations.AnimationType;
+import tray.notification.NotificationType;
+import tray.notification.TrayNotification;
 
 /**
  * Created by fatminmin on 6/28/16.
@@ -18,6 +22,8 @@ public class Main extends Application {
 
     FXMLLoader fxmlLoader;
     UIController uiController;
+
+    public static TrayNotification notification;
 
 
     static public void moveToFront() {
@@ -40,6 +46,17 @@ public class Main extends Application {
         crawler = new Crawler(uiController);
         app = this;
         mStage = primaryStage;
+
+        primaryStage.setOnCloseRequest(e -> Platform.exit());
+
+        notification = new TrayNotification();
+        notification.setTitle("A new post is detected");
+        notification.setNotificationType(NotificationType.SUCCESS);
+        notification.setAnimationType(AnimationType.POPUP);
+        notification.setOnDismiss(actionEvent -> {
+            Main.moveToFront();
+        });
+
     }
 
 

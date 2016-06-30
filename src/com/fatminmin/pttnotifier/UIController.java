@@ -6,6 +6,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import tray.animations.AnimationType;
+import tray.notification.NotificationType;
+import tray.notification.TrayNotification;
 
 /**
  * Created by fatminmin on 6/28/16.
@@ -50,11 +53,10 @@ public class UIController {
     }
 
     private void alertUser(String title) {
-        Main.moveToFront();
-//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//        alert.setTitle("Find new post!!");
-//        alert.setContentText(title);
-//        alert.showAndWait();
+        Main.notification.setMessage(title);
+        if(!Main.notification.isTrayShowing()) {
+            Main.notification.showAndWait();
+        }
     }
 
     public void notifyPostAppeared(String title, String url) {
