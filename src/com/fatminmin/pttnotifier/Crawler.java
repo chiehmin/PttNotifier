@@ -2,6 +2,7 @@ package com.fatminmin.pttnotifier;
 
 import com.fatminmin.pttnotifier.model.Post;
 import javafx.application.Platform;
+import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,13 +29,15 @@ public class Crawler {
 
     private Set<String> shown = new HashSet<>();
 
-    private Task loopTask = new Task<Void>() {
+
+    private class LoopTask extends Task<Void> {
+
         @Override
         protected Void call() throws Exception {
             loop();
             return null;
         }
-    };
+    }
 
     public Crawler(UIController controller) {
         mBoard = "BuyTogether";
@@ -80,7 +83,7 @@ public class Crawler {
 
         cont = true;
         firstRun = true;
-        Thread worker = new Thread(loopTask);
+        Thread worker = new Thread(new LoopTask());
         worker.setDaemon(true);
         worker.start();
         return true;
