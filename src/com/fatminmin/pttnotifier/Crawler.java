@@ -9,7 +9,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -75,7 +79,7 @@ public class Crawler {
     public boolean start() {
         if(mBoard == null) return false;
         try {
-            Common.enableSSLSocket();
+//            Common.enableSSLSocket();
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -111,25 +115,21 @@ public class Crawler {
     private void checkBoardArticles() {
 
         List<Post> posts = new ArrayList<>();
-        try {
-            String boardIndexUrl = Common.getBoardUrl(mBoard);
-            Document doc = Jsoup.connect(boardIndexUrl).get();
-            posts.addAll(getBoardArticles(doc));
 
-            if(firstRun) {
-                firstRun = false;
-                Elements btns = doc.select(".btn.wide");
-                for(Element btn : btns) {
-                    if(btn.text().contains("上頁")) {
-                        String lastPageUrl = Common.getCompleteUrl(btn.attr("href"));
-                        doc = Jsoup.connect(lastPageUrl).get();
-                        posts.addAll(getBoardArticles(doc));
-                    }
+        String boardIndexUrl = Common.getBoardUrl(mBoard);
+        Document doc = Common.getDocument(boardIndexUrl);
+        posts.addAll(getBoardArticles(doc));
+
+        if(firstRun) {
+            firstRun = false;
+            Elements btns = doc.select(".btn.wide");
+            for(Element btn : btns) {
+                if(btn.text().contains("上頁")) {
+                    String lastPageUrl = Common.getCompleteUrl(btn.attr("href"));
+                    doc = Common.getDocument(lastPageUrl);
+                    posts.addAll(getBoardArticles(doc));
                 }
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         log("Find " + posts.size() + " posts.");

@@ -52,20 +52,14 @@ public class Post {
     }
 
     private void prepare() {
-        try {
-            mDoc = Jsoup.connect(mUrl).get();
-            Element content = mDoc.getElementById("main-content");
-            mText = content.text();
-            mPush = content.getElementsByClass("push").text();
-            content.getElementsByClass("article-metaline").remove();
-            content.getElementsByClass("article-metaline-right").remove();
-            content.getElementsByClass("push").remove();
-            mArticle = content.text();
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        mDoc = Common.getDocument(mUrl);
+        Element content = mDoc.getElementById("main-content");
+        mText = content.text();
+        mPush = content.getElementsByClass("push").text();
+        content.getElementsByClass("article-metaline").remove();
+        content.getElementsByClass("article-metaline-right").remove();
+        content.getElementsByClass("push").remove();
+        mArticle = content.text();
     }
 
     public static void main(String[] args) {
