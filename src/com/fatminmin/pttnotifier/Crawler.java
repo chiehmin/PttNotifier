@@ -26,6 +26,7 @@ public class Crawler {
     private List<String> keywordsList = new ArrayList<>();
 
     private long mTimeOut = 10 * 1000;
+    private long mRestartTimeOut = 1 * 1000;
     private boolean cont = false;
     private boolean firstRun = false;
 
@@ -67,10 +68,16 @@ public class Crawler {
                 log("[Parsing start] " + sdf.format(new Date()));
                 log("Starting parsing board...");
 
-                checkBoardArticles();
+                try {
+                    checkBoardArticles();
+                    log("[Parsing end] " + sdf.format(new Date()));
+                    Thread.sleep(mTimeOut);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    log("Error occurs...restarting...");
+                    Thread.sleep(mRestartTimeOut);
+                }
 
-                log("[Parsing end] " + sdf.format(new Date()));
-                Thread.sleep(mTimeOut);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,7 +119,7 @@ public class Crawler {
         });
     }
 
-    private void checkBoardArticles() {
+    private void checkBoardArticles() throws Exception {
 
         List<Post> posts = new ArrayList<>();
 
@@ -147,7 +154,7 @@ public class Crawler {
             }
         }
     }
-    private List<Post> getBoardArticles(Document doc) {
+    private List<Post> getBoardArticles(Document doc) throws Exception {
         List<Post> res = new ArrayList<>();
         Elements posts = doc.select(".title");
         for(Element post : posts) {
