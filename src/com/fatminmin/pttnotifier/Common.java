@@ -28,6 +28,7 @@ public class Common {
         try {
             return Jsoup.connect(url)
                     .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+                    .cookie("over18", "1")
                     .get();
         } catch (IOException e) {
             e.printStackTrace();
